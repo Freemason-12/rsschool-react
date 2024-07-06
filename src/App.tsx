@@ -1,4 +1,4 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ReactNode } from 'react';
 import { Search } from './components/Search/Search';
 import { Results } from './components/Results/Results';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';

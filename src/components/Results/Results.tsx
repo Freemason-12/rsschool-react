@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { ResultsProps } from './Results.types';
-import { PlanetSearchResult, Planet, getPlanets } from '../../utils/PlanetsApi';
+import { Planet } from '../../utils/PlanetsApi';
 import styles from './Results.module.css';
 
 export class Results extends Component<ResultsProps> {
