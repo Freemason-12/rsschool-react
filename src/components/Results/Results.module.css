@@ -1,0 +1,64 @@
+.results,
+.resultsList {
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+.results {
+	align-items: center;
+	width: 100vw;
+	box-sizing: border-box;
+}
+.resultsList {
+	list-style-type: none;
+	width: calc(100%);
+	box-sizing: border-box;
+	margin: 0px;
+	padding: 0px;
+}
+
+.resultItem {
+	position: relative;
+	border: 1px solid black;
+	border-radius: 0.3rem;
+	padding: 1rem 0rem;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.resultItem > table > tr:even {
+	border: 1px solid red;
+}
+
+.planetName {
+	margin: 0px;
+	display: inline-block;
+	box-sizing: border-box;
+}
+
+.toggleProperties ~ table {
+	display: none;
+}
+
+.toggleProperties:checked ~ table {
+	display: block;
+	box-sizing: border-box;
+	border-collapse: collapse;
+	width: calc(100% - 2rem);
+}
+
+.toggleProperties {
+	appearance: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 0px;
+	width: 100%;
+	height: 100%;
+	text-align: right;
+	content: 'properties';
+}
+
+.toggleProperties:checked {
+	background: #ffffff11;
+}

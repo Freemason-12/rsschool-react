@@ -1,35 +1,47 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { Search } from './components/Search/Search';
+import { Results } from './components/Results/Results';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
+import { PlanetSearchResult, getPlanets } from './utils/PlanetsApi';
 
-function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  );
+class App extends Component {
+	state = {
+		state: 'loading' as 'loading' | 'loaded' | 'error',
+		data: {} as PlanetSearchResult,
+	};
+	componentDidMount(): void {
+		getPlanets()
+			.then((r) => this.setState({ state: 'loaded', data: r }))
+			.catch(() => this.setState({ state: 'error' }));
+	}
+	render(): ReactNode {
+		return (
+			<ErrorBoundary>
+				<section>
+					<Search
+						onSearch={(keyword: string) => {
+							this.setState({ state: 'loading' });
+							getPlanets(keyword).then((r) =>
+								this.setState({ state: 'loaded', data: r }),
+							);
+							localStorage.setItem('lastSearch', keyword.trim());
+						}}
+					/>
+				</section>
+				<section>
+					<Results
+						state={this.state.state}
+						data={this.state.data}
+						onSwitch={(api: string | null | undefined) => {
+							fetch(api || '')
+								.then((r) => r.json())
+								.then((r) => this.setState({ data: r }));
+						}}
+					/>
+				</section>
+			</ErrorBoundary>
+		);
+	}
 }
 
 export default App;
