@@ -6,13 +6,13 @@ import { PlanetSearchResult, getPlanets } from './utils/PlanetsApi';
 
 class App extends Component {
 	state = {
-		state: 'loading' as 'loading' | 'loaded' | 'error',
+		currentState: 'loading' as 'loading' | 'loaded' | 'error',
 		data: {} as PlanetSearchResult,
 	};
 	componentDidMount(): void {
-		getPlanets()
-			.then((r) => this.setState({ state: 'loaded', data: r }))
-			.catch(() => this.setState({ state: 'error' }));
+		getPlanets(localStorage.getItem('lastSearch') || '')
+			.then((r) => this.setState({ currentState: 'loaded', data: r }))
+			.catch(() => this.setState({ currentState: 'error' }));
 	}
 	render(): ReactNode {
 		return (
@@ -20,10 +20,10 @@ class App extends Component {
 				<section>
 					<Search
 						onSearch={(keyword: string) => {
-							this.setState({ state: 'loading' });
-							void getPlanets(keyword).then((r) =>
+							this.setState({ currentState: 'loading' });
+							void getPlanets(keyword).then((r: PlanetSearchResult) =>
 								this.setState({
-									state: 'loaded',
+									currentState: 'loaded',
 									data: r,
 								}),
 							);
@@ -33,12 +33,13 @@ class App extends Component {
 				</section>
 				<section>
 					<Results
-						state={this.state.state}
+						state={this.state.currentState}
 						data={this.state.data}
 						onSwitch={(api: string | null | undefined) => {
-							void fetch(api || '')
-								.then((r) => r.json())
-								.then((r) => this.setState({ data: r as PlanetSearchResult }));
+							fetch(api || '')
+								.then((r: Response) => r.json())
+								.then((r: PlanetSearchResult) => this.setState({ data: r }))
+								.catch(console.error);
 						}}
 					/>
 				</section>
