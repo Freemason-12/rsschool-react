@@ -1,0 +1,29 @@
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+	eslint.configs.recommended,
+	...tseslint.configs.recommendedTypeChecked,
+	{
+		plugins: {
+			'@typescript-eslint': tseslint.plugin,
+			// 'react-compiler': 'react-compiler',
+		},
+		languageOptions: {
+			parser: tseslint.parser,
+			parserOptions: { project: './tsconfig.app.json' },
+		},
+		rules: {
+			'@typescript-eslint/no-explicit-any': 'error',
+			// 'react-compiler/react-compiler': 'error',
+		},
+		files: ['./src/App.tsx', './src/**/*.{ts,tsx}'],
+		ignores: [
+			'*.{cjs,js}',
+			'./node_modules/*',
+			'dist/*',
+			'.config*',
+			'./.eslintrc.cjs',
+		],
+	},
+);

@@ -23,6 +23,6 @@ export type PlanetSearchResult = {
 };
 
 export const getPlanets = async (search?: string) =>
-	await fetch(
+	(await fetch(
 		`https://swapi.dev/api/planets/${search ? '?search=' + search : ''}`,
-	).then((r) => r.json());
+	).then((r) => r.json())) as PlanetSearchResult;

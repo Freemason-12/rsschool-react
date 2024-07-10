@@ -21,8 +21,11 @@ class App extends Component {
 					<Search
 						onSearch={(keyword: string) => {
 							this.setState({ state: 'loading' });
-							getPlanets(keyword).then((r) =>
-								this.setState({ state: 'loaded', data: r }),
+							void getPlanets(keyword).then((r) =>
+								this.setState({
+									state: 'loaded',
+									data: r,
+								}),
 							);
 							localStorage.setItem('lastSearch', keyword.trim());
 						}}
@@ -33,9 +36,9 @@ class App extends Component {
 						state={this.state.state}
 						data={this.state.data}
 						onSwitch={(api: string | null | undefined) => {
-							fetch(api || '')
+							void fetch(api || '')
 								.then((r) => r.json())
-								.then((r) => this.setState({ data: r }));
+								.then((r) => this.setState({ data: r as PlanetSearchResult }));
 						}}
 					/>
 				</section>
