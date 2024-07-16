@@ -7,7 +7,7 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
-		<BrowserRouter>
+		<BrowserRouter basename="/rsschool-react/">
 			<Routes>
 				<Route path="/*" element={<div>Error 404 page not found</div>} />
 				<Route path="/" element={<App />} />
