@@ -1,65 +1,84 @@
-import { Component } from 'react';
-import { ResultsProps } from './Results.types';
-import { Planet } from '../../utils/PlanetsApi';
+import { FC, useState, useEffect } from 'react';
+import { getPlanets, Planet, PlanetSearchResult } from '../../utils/PlanetsApi';
+import { useSearchParams } from 'react-router-dom';
+import { Card } from '../Card/Card';
+import { DetailedCard } from '../DetailedCard/DetailedCard';
 import styles from './Results.module.css';
 
-export class Results extends Component<ResultsProps> {
-	render() {
-		return this.props.state === 'loading' ? (
-			'loading'
-		) : this.props.state === 'error' ? (
-			'error'
-		) : (
+export const Results: FC = () => {
+	const [state, setState] = useState('loading');
+	const [data, setData] = useState({} as PlanetSearchResult);
+	const [params, setSearchParams] = useSearchParams();
+	// const navigate = useNavigate();
+
+	useEffect(() => {
+		console.log(params);
+		getPlanets(
+			params.get('search') || undefined,
+			Number(params.get('page')) || undefined,
+		)
+			.then((r: PlanetSearchResult) => {
+				setData(r);
+				setState('loaded');
+			})
+			.catch((e: Error) => {
+				setState('error');
+				console.error(e);
+			});
+	}, [params]);
+
+	return state === 'loading' ? (
+		<div className={styles.results}>loading</div>
+	) : state === 'error' ? (
+		<div className={styles.results}>error</div>
+	) : (
+		<div className={styles.main}>
 			<div className={styles.results}>
-				<ul className={styles.resultsList}>
-					{this.props.data?.results.map((planet: Planet) => (
-						<li key={planet.url} className={styles.resultItem}>
-							<h2 className={styles.planetName}>{planet.name}</h2>
-							<input
-								className={styles.toggleProperties}
-								type="radio"
-								name="properties"
-							/>
-							<table>
-								<tr>
-									<td>Diameter:</td>
-									<td>{planet.diameter}</td>
-								</tr>
-								<tr>
-									<td>Rotation period:</td>
-									<td>{planet.rotation_period}</td>
-								</tr>
-								<tr>
-									<td>Orbital period:</td>
-									<td>{planet.orbital_period}</td>
-								</tr>
-								<tr>
-									<td>Gravity:</td>
-									<td>{planet.gravity}</td>
-								</tr>
-								<tr>
-									<td>Population:</td>
-									<td>{planet.population}</td>
-								</tr>
-							</table>
-						</li>
+				<div className={styles.resultsList}>
+					{data?.results.map((planet: Planet) => (
+						<Card
+							key={planet.url}
+							name={planet.name}
+							onClick={() => {
+								const planetId = planet.url.match(/[0-9]+/);
+								if (planetId) {
+									params.set('planet', planetId[0]);
+									setSearchParams(params);
+								}
+							}}
+						/>
 					))}
-				</ul>
+				</div>
 				<div>
 					<button
-						disabled={this.props.data?.previous === null}
-						onClick={() => this.props.onSwitch(this.props.data?.previous)}
+						disabled={data.previous === null}
+						onClick={() => {
+							if (data.previous) {
+								setState('loading');
+								params.set('page', `${(Number(params.get('page')) || 1) - 1}`);
+								setSearchParams(params);
+							}
+						}}
 					>
 						Previous
 					</button>
 					<button
-						disabled={this.props.data?.next === null}
-						onClick={() => this.props.onSwitch(this.props.data?.next)}
+						disabled={data.next === null}
+						onClick={() => {
+							if (data.next) {
+								setState('loading');
+								params.set('page', `${(Number(params.get('page')) || 1) + 1}`);
+								setSearchParams(params);
+							}
+						}}
 					>
 						Next
 					</button>
 				</div>
 			</div>
-		);
-	}
-}
+			<div className={styles.sidebar}>
+				<DetailedCard />
+			</div>
+		</div>
+	);
+};
