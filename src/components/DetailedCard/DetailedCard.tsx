@@ -1,28 +1,43 @@
 import { FC, useState, useEffect } from 'react';
-import { DetailedCardProps } from './DetailedCard.types';
+// import { DetailedCardProps } from './DetailedCard.types';
+import { useSearchParams } from 'react-router-dom';
 import { Planet } from '../../utils/PlanetsApi';
 
-export const DetailedCard: FC<DetailedCardProps> = ({ planet }) => {
+export const DetailedCard: FC = () => {
 	const [state, setState] = useState('loading');
 	const [data, setData] = useState({} as Planet);
+	const [params, setParams] = useSearchParams();
 
 	useEffect(() => {
-		fetch(`https://swapi.dev/api/planets/${planet}`)
-			.then((r: Response) => r.json())
-			.then((r: Planet) => {
-				setState('loaded');
-				setData(r);
-			})
-			.catch(console.error);
-	}, [planet]);
+		if (params.get('planet'))
+			fetch(`https://swapi.dev/api/planets/${params.get('planet')}`)
+				.then((r: Response) => r.json())
+				.then((r: Planet) => {
+					setState('loaded');
+					setData(r);
+				})
+				.catch(console.error);
+		else setState('hidden');
+	}, [params]);
 
 	return state === 'loading' ? (
 		<div>loading</div>
+	) : state == 'hidden' ? (
+		<></>
 	) : state === 'error' ? (
 		<div>error</div>
 	) : (
 		<div>
-			<h1>data.name</h1>
+			<button
+				onClick={() => {
+					setState('hidden');
+					params.delete('planet');
+					setParams(params);
+				}}
+			>
+				close
+			</button>
+			<h1>{data.name}</h1>
 			<table>
 				<tbody>
 					<tr>
