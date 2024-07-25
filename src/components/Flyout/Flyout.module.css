@@ -1,0 +1,14 @@
+.flyout {
+	position: fixed;
+	right: 1rem;
+}
+
+.nonempty {
+	bottom: 0px;
+	transition: bottom 0.3s;
+}
+
+.empty {
+	bottom: -5rem;
+	transition: bottom 0.3s;
+}

@@ -21,14 +21,3 @@ export type PlanetSearchResult = {
 	previous: string | null;
 	results: Planet[];
 };
-
-export const getPlanets = async (search?: string, page?: number) => {
-	// const searchHere = search ? search.length > 0 : false;
-	const query = [];
-	if (search) query.push(`search=${search}`);
-	if (page) query.push(`page=${page}`);
-	return (await fetch(
-		'https://swapi.dev/api/planets/' +
-			(query.length > 0 ? `?${query.join('&')}` : ''),
-	).then((r) => r.json())) as PlanetSearchResult;
-};

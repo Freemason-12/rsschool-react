@@ -1,8 +1,32 @@
+@import url('../../assets/styes/base.css');
+.card {
+	position: relative;
+}
 .button {
 	background: transparent;
+	width: 100%;
 }
 
 .button:hover {
 	border: 0px;
 	background: #ffffff50;
+}
+
+.dark {
+	background: var(--base-background-dark);
+	color: var(--text-color-light);
+}
+
+.light {
+	background: var(--base-background-light);
+	color: var(--text-color-dark);
+}
+
+.checkbox {
+	position: absolute;
+	top: 1rem;
+	left: 1rem;
+	width: 2rem;
+	height: 2rem;
+	background: transparent;
 }

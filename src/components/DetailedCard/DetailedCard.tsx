@@ -1,24 +1,31 @@
-import { FC, useState, useEffect } from 'react';
-// import { DetailedCardProps } from './DetailedCard.types';
+import { FC, useState, useEffect, useContext } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { ThemeContext } from '../../context/ThemeContext';
+import planetsApi from '../../store/apiQuery';
 import { Planet } from '../../utils/PlanetsApi';
+import styles from './DetailedCard.module.css';
 
 export const DetailedCard: FC = () => {
 	const [state, setState] = useState('loading');
 	const [data, setData] = useState({} as Planet);
 	const [params, setParams] = useSearchParams();
+	const theme = useContext(ThemeContext);
+	const planet = planetsApi.useGetPlanetQuery(Number(params.get('planet')), {
+		skip: !params.get('planet'),
+	});
 
 	useEffect(() => {
-		if (params.get('planet'))
-			fetch(`https://swapi.dev/api/planets/${params.get('planet')}`)
-				.then((r: Response) => r.json())
-				.then((r: Planet) => {
-					setState('loaded');
-					setData(r);
-				})
-				.catch(console.error);
-		else setState('hidden');
-	}, [params]);
+		if (params.get('planet')) {
+			if (planet.isFetching) {
+				setState('loading');
+				setData({} as Planet);
+			} else if (planet.isError) setState('error');
+			else {
+				setState('loaded');
+				setData(planet.data || ({} as Planet));
+			}
+		} else setState('hidden');
+	}, [params, planet]);
 
 	return state === 'loading' ? (
 		<div>loading</div>
@@ -27,7 +34,7 @@ export const DetailedCard: FC = () => {
 	) : state === 'error' ? (
 		<div>error</div>
 	) : (
-		<div>
+		<div className={`${styles.detailedCard} ${styles[theme]}`}>
 			<button
 				onClick={() => {
 					setState('hidden');
