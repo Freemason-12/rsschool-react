@@ -1,0 +1,10 @@
+@import url('../../assets/styes/base.css');
+.light {
+	background: var(--base-background-light);
+	color: var(--base-background-dark);
+}
+
+.dark {
+	background: var(--base-background-dark);
+	color: var(--base-background-light);
+}
